@@ -1,8 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { dataContext } from "@/context";
+import { useContext, useEffect, useRef, useState } from "react";
 import Globe from "react-globe.gl";
 import "three";
 
 export default function AsteroidGlobe({ asteroid }) {
+  const { asteroidData } = useContext(dataContext);
+  console.log(asteroidData);
   const globeRef = useRef();
   const [points, setPoints] = useState([]);
   const [arcs, setArcs] = useState([]);

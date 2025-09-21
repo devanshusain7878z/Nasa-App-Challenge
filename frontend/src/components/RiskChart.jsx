@@ -1,3 +1,5 @@
+import { dataContext } from "@/context";
+import { useContext } from "react";
 import {
   BarChart,
   Bar,
@@ -8,11 +10,12 @@ import {
 } from "recharts";
 
 const RiskChart = ({ data }) => {
+  const { riskData } = useContext(dataContext);
   return (
     <div className="bg-white p-4 rounded-2xl shadow h-96">
       <h2 className="text-xl font-bold mb-3">📊 Risk Assessment</h2>
       <ResponsiveContainer width="100%" height="80%">
-        <BarChart data={data}>
+        <BarChart data={riskData}>
           <XAxis dataKey="factor" />
           <YAxis />
           <Tooltip />

@@ -1,4 +1,8 @@
-const AsteroidTable = ({ asteroids }) => {
+import { dataContext } from "@/context";
+import { useContext } from "react";
+
+const AsteroidTable = () => {
+  const { asteroidData } = useContext(dataContext);
   return (
     <div className="bg-white p-4 rounded-2xl shadow">
       <h2 className="text-xl font-bold mb-3">🚀 Near-Earth Asteroids</h2>
@@ -11,7 +15,7 @@ const AsteroidTable = ({ asteroids }) => {
           </tr>
         </thead>
         <tbody>
-          {asteroids.map((a, idx) => (
+          {asteroidData.map((a, idx) => (
             <tr key={idx} className="border-b">
               <td className="p-2">{a.name}</td>
               <td className="p-2">{a.size}</td>

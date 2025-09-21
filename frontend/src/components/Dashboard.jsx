@@ -4,6 +4,7 @@ import ImpactMap from "./ImpactMap";
 import RiskChart from "./RiskChart";
 import MitigationPanel from "./MitigationPanel";
 import AsteroidGlobe from "./AsteroidGlobe";
+import { dataContext } from "@/context";
 
 const Dashboard = () => {
   const asteroidData = [
@@ -23,11 +24,15 @@ const Dashboard = () => {
     <div>
       <Navbar />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-        <AsteroidTable asteroids={asteroidData} />
-        <ImpactMap location={impactLocation} />
-        <RiskChart data={riskData} />
-        <MitigationPanel />
-        <AsteroidGlobe asteroids={asteroidData} />
+        <dataContext.Provider
+          value={{ asteroidData, impactLocation, riskData }}
+        >
+          <AsteroidTable />
+          <ImpactMap />
+          <RiskChart />
+          <MitigationPanel />
+          <AsteroidGlobe asteroid={asteroidData} />
+        </dataContext.Provider>
       </div>
     </div>
   );
