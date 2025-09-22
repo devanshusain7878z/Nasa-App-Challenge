@@ -31,7 +31,7 @@ const Dashboard = () => {
           <ImpactMap />
           <RiskChart />
           <MitigationPanel />
-          <AsteroidGlobe asteroid={asteroidData} />
+          {/* <AsteroidGlobe asteroid={asteroidData} /> */}
         </dataContext.Provider>
       </div>
     </div>
