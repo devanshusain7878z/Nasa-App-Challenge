@@ -1,7 +1,8 @@
 import { dataContext } from "@/context";
-import { useContext } from "react";
+import { memo, useContext } from "react";
 
-const AsteroidTable = () => {
+const AsteroidTable = memo(() => {
+  console.log("asteroid");
   const { asteroidData } = useContext(dataContext);
   return (
     <div className="bg-white p-4 rounded-2xl shadow">
@@ -26,6 +27,6 @@ const AsteroidTable = () => {
       </table>
     </div>
   );
-};
+});
 
 export default AsteroidTable;

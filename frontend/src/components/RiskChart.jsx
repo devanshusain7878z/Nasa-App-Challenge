@@ -1,5 +1,5 @@
 import { dataContext } from "@/context";
-import { useContext } from "react";
+import { memo, useContext } from "react";
 import {
   BarChart,
   Bar,
@@ -9,7 +9,8 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const RiskChart = ({ data }) => {
+const RiskChart = memo(() => {
+  console.log("risk");
   const { riskData } = useContext(dataContext);
   return (
     <div className="bg-white p-4 rounded-2xl shadow h-96">
@@ -24,6 +25,6 @@ const RiskChart = ({ data }) => {
       </ResponsiveContainer>
     </div>
   );
-};
+});
 
 export default RiskChart;

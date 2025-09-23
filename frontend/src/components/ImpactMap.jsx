@@ -1,10 +1,9 @@
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { useContext } from "react";
-import { dataContext } from "@/context";
+import { memo } from "react";
 
-const ImpactMap = () => {
-  const { impactLocation } = useContext(dataContext);
+const ImpactMap = memo(({ impactLocation }) => {
+  console.log("impact");
   return (
     <div className="bg-white p-4 rounded-2xl shadow h-96">
       <h2 className="text-xl font-bold mb-3">🌐 Impact Location Simulation</h2>
@@ -20,6 +19,6 @@ const ImpactMap = () => {
       </MapContainer>
     </div>
   );
-};
+});
 
 export default ImpactMap;

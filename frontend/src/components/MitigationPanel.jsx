@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { memo, useState } from "react";
 import {
   BarChart,
   Bar,
@@ -7,8 +7,9 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { DstAlphaFactor } from "three";
 
-export default function MitigationPanel() {
+const MitigationPanel = memo(() => {
   const [asteroid, setAsteroid] = useState({
     size: 300, // meters
     speed: 25000, // km/h
@@ -17,6 +18,7 @@ export default function MitigationPanel() {
   });
 
   const calculateMitigation = () => {
+    console.log("calculate");
     const { size, probability, warningTime } = asteroid;
 
     return [
@@ -95,4 +97,6 @@ export default function MitigationPanel() {
       </ResponsiveContainer>
     </div>
   );
-}
+});
+
+export default MitigationPanel;
