@@ -1,24 +1,47 @@
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import React from "react";
+import { MapContainer, TileLayer, CircleMarker, Tooltip } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { memo } from "react";
 
-const ImpactMap = memo(({ impactLocation }) => {
-  console.log("impact");
+const getColorByCrater = (crater) => {
+  if (!crater) return "red";
+  if (crater < 50) return "green";
+  if (crater < 200) return "yellow";
+  if (crater < 500) return "orange";
+  return "red";
+};
+
+const ImpactMap = ({ asteroids, crater, velocityShift = 0 }) => {
   return (
-    <div className="bg-white p-4 rounded-2xl shadow h-96">
-      <h2 className="text-xl font-bold mb-3">🌐 Impact Location Simulation</h2>
-      <MapContainer
-        center={impactLocation}
-        zoom={3}
-        className="h-80 w-full rounded-2xl"
-      >
-        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-        <Marker position={impactLocation}>
-          <Popup>Potential Impact Zone 🌍</Popup>
-        </Marker>
-      </MapContainer>
-    </div>
+    <MapContainer
+      center={[20, 0]}
+      zoom={2}
+      style={{ height: "400px", width: "100%" }}
+      className="leaflet-container"
+    >
+      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+
+      {asteroids.map((a) => {
+        const lat = Math.random() * 140 - 70 + velocityShift;
+        const lng = Math.random() * 360 - 180 + velocityShift;
+        return (
+          <CircleMarker
+            key={a.id}
+            center={[lat, lng]}
+            radius={crater ? crater / 5 : 5}
+            color={getColorByCrater(crater)}
+          >
+            <Tooltip>
+              <div>
+                <strong>{a.name}</strong>
+                <br />
+                Crater: {crater ? crater.toFixed(2) + " m" : "N/A"}
+              </div>
+            </Tooltip>
+          </CircleMarker>
+        );
+      })}
+    </MapContainer>
   );
-});
+};
 
 export default ImpactMap;
