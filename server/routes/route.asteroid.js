@@ -6,6 +6,12 @@ import {
   calculateCraterDiameter,
   calculateImpactEnergy,
   calculateMass,
+  calculateTNTEquivalent,
+  calculateSeismicMagnitude,
+  calculateTsunamiHeight,
+  calculateAtmosphericEntryEffects,
+  calculateEnvironmentalEffects,
+  calculateRiskScore,
 } from "../utils/calculations.js";
 
 // GET /api/asteroids?page=0
@@ -65,17 +71,42 @@ router.post("/simulate-impact", async (req, res) => {
     }
 
     if (!diameter || !velocity) {
-      return res
-        .status(400)
-        .json({
-          error: "Missing diameter or velocity (or invalid asteroidId)",
-        });
+      return res.status(400).json({
+        error: "Missing diameter or velocity (or invalid asteroidId)",
+      });
     }
 
     const adjustedVelocity = parseFloat(velocity) + parseFloat(velocityChange);
     const mass = calculateMass(diameter);
     const energy = calculateImpactEnergy(mass, adjustedVelocity);
     const crater = calculateCraterDiameter(energy);
+    const tntEquivalent = calculateTNTEquivalent(energy);
+    const seismicMagnitude = calculateSeismicMagnitude(energy);
+    const atmosphericEffects = calculateAtmosphericEntryEffects(
+      diameter,
+      adjustedVelocity
+    );
+
+    // Environmental effects (simplified location)
+    const impactLocation = {
+      lat: 0, // Default to equator
+      lng: 0,
+      isCoastal: Math.random() > 0.5,
+    };
+    const environmentalEffects = calculateEnvironmentalEffects(
+      energy,
+      impactLocation
+    );
+
+    // Tsunami height calculation
+    const tsunamiHeight = calculateTsunamiHeight(energy, 0); // 0 km from coast
+
+    // Risk assessment
+    const riskAssessment = calculateRiskScore(
+      { diameter, velocity: adjustedVelocity },
+      Math.random() * 0.1, // Random impact probability
+      365 // 1 year to impact
+    );
 
     // deterministic approximate "impact point shift" for demo (simple)
     const impactShiftLat = velocityChange * 2;
@@ -91,6 +122,14 @@ router.post("/simulate-impact", async (req, res) => {
       crater,
       impactShiftLat,
       impactShiftLng,
+      // Enhanced impact analysis
+      tntEquivalent,
+      seismicMagnitude,
+      tsunamiHeight,
+      atmosphericEffects,
+      environmentalEffects,
+      riskAssessment,
+      impactLocation,
     });
   } catch (err) {
     console.error(err?.response?.data || err.message || err);
