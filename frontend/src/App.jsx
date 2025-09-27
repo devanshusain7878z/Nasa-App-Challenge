@@ -1,5 +1,5 @@
 // frontend/src/App.jsx
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useReducer, useState } from "react";
 import { NavLink, Routes, Route, Navigate } from "react-router-dom";
 import {
   getAsteroids,
@@ -15,6 +15,8 @@ import RiskChart from "./components/RiskChart";
 import EducationalOverlay from "./components/EducationalOverlay";
 import Impactor2025Scenario from "./components/Impactor2025Scenario";
 import "./accessibility.css";
+import { useStorage } from "./hooks/useStorage";
+import { dataContext } from "./Context";
 
 function avgDiameterFromEstimated(estimated) {
   if (!estimated?.meters) return null;
@@ -33,70 +35,89 @@ function idToLatLng(id) {
 }
 
 const App = () => {
-  const [asteroidsData, setAsteroidsData] = useState([]);
-  const [selectedId, setSelectedId] = useState(null);
-  const [selectedAsteroid, setSelectedAsteroid] = useState(null);
+  const {
+    asteroidsData,
+    dispatch,
+    selectedId,
+    selectedAsteroid,
+    size,
+    velocity,
+    velocityChange,
+    impactResult,
+    showEducational,
+    showScenario,
+    mitigationResults,
+    riskData,
+    setSelectedId,
+    setVelocityChange,
+    setVelocity,
+    setSize,
+    setMitigationResults,
+    setShowScenario,
+  } = useContext(dataContext);
+  // const [selectedId, setSelectedId] = useState(null);
+  // const [selectedAsteroid, setSelectedAsteroid] = useState(null);
 
-  const [size, setSize] = useState(100);
-  const [velocity, setVelocity] = useState(20);
-  const [velocityChange, setVelocityChange] = useState(0);
-  const [impactResult, setImpactResult] = useState(null);
+  // const [size, setSize] = useState(100);
+  // const [velocity, setVelocity] = useState(20);
+  // const [velocityChange, setVelocityChange] = useState(0);
+  // const [impactResult, setImpactResult] = useState(null);
 
-  const [showEducational, setShowEducational] = useState(false);
-  const [showScenario, setShowScenario] = useState(false);
-  const [mitigationResults, setMitigationResults] = useState(null);
-  const [riskData, setRiskData] = useState([]);
+  // const [showEducational, setShowEducational] = useState(false);
+  // const [showScenario, setShowScenario] = useState(false);
+  // const [mitigationResults, setMitigationResults] = useState(null);
+  // const [riskData, setRiskData] = useState([]);
 
-  useEffect(() => {
-    async function load() {
-      const data = await getAsteroids(0);
-      // NASA browse returns near_earth_objects array OR near_earth_objects keyed by page; handle both
-      const list = data.near_earth_objects || data;
-      setAsteroidsData(list || []);
-    }
-    load();
-  }, []);
+  // useEffect(() => {
+  //   async function load() {
+  //     const data = await getAsteroids(0);
+  //     // NASA browse returns near_earth_objects array OR near_earth_objects keyed by page; handle both
+  //     const list = data.near_earth_objects || data;
+  //     dispatch({ type: "setAsteroidsData", payload: list || [] });
+  //   }
+  //   load();
+  // }, []);
 
-  useEffect(() => {
-    // when user selects an asteroid id, fetch details and fill defaults
-    if (!selectedId) {
-      setSelectedAsteroid(null);
-      return;
-    }
-    (async () => {
-      const details = await getAsteroidDetails(selectedId);
-      setSelectedAsteroid(details);
+  // useEffect(() => {
+  //   // when user selects an asteroid id, fetch details and fill defaults
+  //   if (!selectedId) {
+  //     setSelectedAsteroid(null);
+  //     return;
+  //   }
+  //   (async () => {
+  //     const details = await getAsteroidDetails(selectedId);
+  //     setSelectedAsteroid(details);
 
-      const avgD = avgDiameterFromEstimated(details.estimated_diameter);
-      const relVel =
-        details.close_approach_data?.[0]?.relative_velocity
-          ?.kilometers_per_second;
-      if (avgD) setSize(Math.round(avgD));
-      if (relVel) setVelocity(Number(parseFloat(relVel).toFixed(2)));
-      // trigger an immediate simulation (using asteroid defaults)
-      const sim = await simulateImpact(
-        avgD || size,
-        relVel || velocity,
-        velocityChange,
-        selectedId
-      );
-      setImpactResult(sim);
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedId]);
+  //     const avgD = avgDiameterFromEstimated(details.estimated_diameter);
+  //     const relVel =
+  //       details.close_approach_data?.[0]?.relative_velocity
+  //         ?.kilometers_per_second;
+  //     if (avgD) setSize(Math.round(avgD));
+  //     if (relVel) setVelocity(Number(parseFloat(relVel).toFixed(2)));
+  //     // trigger an immediate simulation (using asteroid defaults)
+  //     const sim = await simulateImpact(
+  //       avgD || size,
+  //       relVel || velocity,
+  //       velocityChange,
+  //       selectedId
+  //     );
+  //     setImpactResult(sim);
+  //   })();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [selectedId]);
 
-  // When size/velocity/velocityChange change, re-simulate (but keep asteroidId if selected)
-  useEffect(() => {
-    (async () => {
-      const sim = await simulateImpact(
-        size,
-        velocity,
-        velocityChange,
-        selectedId
-      );
-      setImpactResult(sim);
-    })();
-  }, [size, velocity, velocityChange, selectedId]);
+  // // When size/velocity/velocityChange change, re-simulate (but keep asteroidId if selected)
+  // useEffect(() => {
+  //   (async () => {
+  //     const sim = await simulateImpact(
+  //       size,
+  //       velocity,
+  //       velocityChange,
+  //       selectedId
+  //     );
+  //     setImpactResult(sim);
+  //   })();
+  // }, [size, velocity, velocityChange, selectedId]);
 
   const selectedMarker = selectedAsteroid
     ? idToLatLng(selectedAsteroid.id)

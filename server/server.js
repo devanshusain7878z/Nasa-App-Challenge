@@ -48,12 +48,6 @@ app.use((req, res) => {
   res.status(404).json({ error: "Endpoint not found" });
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Asteroid Impact Simulation Server running on port ${PORT}`);
-  console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
-  console.log(
-    `🌍 NASA NEO API integration: ${
-      process.env.NASA_API_KEY ? "configured" : "using DEMO_KEY"
-    }`
-  );
-});
+app.listen(PORT, () =>
+  console.log(`server running on http://localhost:${PORT}`)
+);
