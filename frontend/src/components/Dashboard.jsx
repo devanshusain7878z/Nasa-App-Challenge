@@ -1,7 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { getAsteroids } from "../services/api";
+import { damp } from "three/src/math/MathUtils";
+import { dataContext } from "@/Context";
 
-const Dashboard = ({ asteroids, selectedAsteroid, impactResult, riskData }) => {
+const Dashboard = () => {
+  const {
+    asteroidsData: asteroids,
+    selectedAsteroid,
+    impactResult,
+    riskData,
+  } = useContext(dataContext);
   const [stats, setStats] = useState({
     totalAsteroids: 0,
     hazardousAsteroids: 0,

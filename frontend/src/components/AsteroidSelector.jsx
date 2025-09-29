@@ -1,6 +1,12 @@
-import React from "react";
+import { dataContext } from "@/Context";
+import React, { useContext } from "react";
 
-const AsteroidSelector = ({ asteroids, selectedId, setSelectedId }) => {
+const AsteroidSelector = () => {
+  const {
+    asteroidsData: asteroids,
+    selectedId,
+    setSelectedId,
+  } = useContext(dataContext);
   return (
     <div className="bg-gray-800 text-white p-3 rounded-lg shadow mb-4">
       <label className="block font-semibold mb-2">Select asteroid</label>

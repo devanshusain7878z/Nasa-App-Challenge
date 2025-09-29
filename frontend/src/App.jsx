@@ -1,11 +1,6 @@
 // frontend/src/App.jsx
-import React, { useContext, useEffect, useReducer, useState } from "react";
+import React, { useContext } from "react";
 import { NavLink, Routes, Route, Navigate } from "react-router-dom";
-import {
-  getAsteroids,
-  getAsteroidDetails,
-  simulateImpact,
-} from "./services/api";
 import Dashboard from "./components/Dashboard";
 import OrbitalView from "./components/OrbitalView";
 import ImpactMap from "./components/ImpactMap";
@@ -15,14 +10,9 @@ import RiskChart from "./components/RiskChart";
 import EducationalOverlay from "./components/EducationalOverlay";
 import Impactor2025Scenario from "./components/Impactor2025Scenario";
 import "./accessibility.css";
-import { useStorage } from "./hooks/useStorage";
 import { dataContext } from "./Context";
-
-function avgDiameterFromEstimated(estimated) {
-  if (!estimated?.meters) return null;
-  const m = estimated.meters;
-  return (m.estimated_diameter_min + m.estimated_diameter_max) / 2;
-}
+import Header from "./components/Header";
+import Navigation from "./components/Navigation";
 
 function idToLatLng(id) {
   // deterministic pseudo-random lat/lng from id
@@ -36,9 +26,6 @@ function idToLatLng(id) {
 
 const App = () => {
   const {
-    asteroidsData,
-    dispatch,
-    selectedId,
     selectedAsteroid,
     size,
     velocity,
@@ -46,78 +33,14 @@ const App = () => {
     impactResult,
     showEducational,
     showScenario,
-    mitigationResults,
-    riskData,
-    setSelectedId,
+
     setVelocityChange,
     setVelocity,
     setSize,
-    setMitigationResults,
+
     setShowScenario,
+    setShowEducational,
   } = useContext(dataContext);
-  // const [selectedId, setSelectedId] = useState(null);
-  // const [selectedAsteroid, setSelectedAsteroid] = useState(null);
-
-  // const [size, setSize] = useState(100);
-  // const [velocity, setVelocity] = useState(20);
-  // const [velocityChange, setVelocityChange] = useState(0);
-  // const [impactResult, setImpactResult] = useState(null);
-
-  // const [showEducational, setShowEducational] = useState(false);
-  // const [showScenario, setShowScenario] = useState(false);
-  // const [mitigationResults, setMitigationResults] = useState(null);
-  // const [riskData, setRiskData] = useState([]);
-
-  // useEffect(() => {
-  //   async function load() {
-  //     const data = await getAsteroids(0);
-  //     // NASA browse returns near_earth_objects array OR near_earth_objects keyed by page; handle both
-  //     const list = data.near_earth_objects || data;
-  //     dispatch({ type: "setAsteroidsData", payload: list || [] });
-  //   }
-  //   load();
-  // }, []);
-
-  // useEffect(() => {
-  //   // when user selects an asteroid id, fetch details and fill defaults
-  //   if (!selectedId) {
-  //     setSelectedAsteroid(null);
-  //     return;
-  //   }
-  //   (async () => {
-  //     const details = await getAsteroidDetails(selectedId);
-  //     setSelectedAsteroid(details);
-
-  //     const avgD = avgDiameterFromEstimated(details.estimated_diameter);
-  //     const relVel =
-  //       details.close_approach_data?.[0]?.relative_velocity
-  //         ?.kilometers_per_second;
-  //     if (avgD) setSize(Math.round(avgD));
-  //     if (relVel) setVelocity(Number(parseFloat(relVel).toFixed(2)));
-  //     // trigger an immediate simulation (using asteroid defaults)
-  //     const sim = await simulateImpact(
-  //       avgD || size,
-  //       relVel || velocity,
-  //       velocityChange,
-  //       selectedId
-  //     );
-  //     setImpactResult(sim);
-  //   })();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [selectedId]);
-
-  // // When size/velocity/velocityChange change, re-simulate (but keep asteroidId if selected)
-  // useEffect(() => {
-  //   (async () => {
-  //     const sim = await simulateImpact(
-  //       size,
-  //       velocity,
-  //       velocityChange,
-  //       selectedId
-  //     );
-  //     setImpactResult(sim);
-  //   })();
-  // }, [size, velocity, velocityChange, selectedId]);
 
   const selectedMarker = selectedAsteroid
     ? idToLatLng(selectedAsteroid.id)
@@ -126,113 +49,21 @@ const App = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-700 text-white">
       {/* Header */}
-      <header className="bg-gray-800 shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-4">
-              <h1 className="text-3xl font-bold text-blue-400">
-                🌍 Asteroid Impact Simulator
-              </h1>
-            </div>
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={() => setShowEducational(!showEducational)}
-                className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors"
-              >
-                {showEducational ? "Hide" : "Show"} Educational
-              </button>
-              <button
-                onClick={() => setShowScenario(!showScenario)}
-                className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition-colors"
-              >
-                Impactor-2025 Scenario
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       {/* Navigation */}
-      <nav className="bg-gray-700 shadow-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex space-x-8">
-            <NavLink
-              to="/dashboard"
-              className={({ isActive }) =>
-                `py-4 px-2 border-b-2 font-medium text-sm transition-colors ${
-                  isActive
-                    ? "border-b-blue-500 text-blue-400"
-                    : "border-transparent text-gray-300 hover:text-white hover:border-gray-300"
-                }`
-              }
-            >
-              📊 Dashboard
-            </NavLink>
-            <NavLink
-              to="/simulation"
-              className={({ isActive }) =>
-                `py-4 px-2 border-b-2 font-medium text-sm transition-colors ${
-                  isActive
-                    ? "border-blue-500 text-blue-400"
-                    : "border-transparent text-gray-300 hover:text-white hover:border-gray-300"
-                }`
-              }
-            >
-              🎯 Simulation
-            </NavLink>
-            <NavLink
-              to="/mitigation"
-              className={({ isActive }) =>
-                `py-4 px-2 border-b-2 font-medium text-sm transition-colors ${
-                  isActive
-                    ? "border-blue-500 text-blue-400"
-                    : "border-transparent text-gray-300 hover:text-white hover:border-gray-300"
-                }`
-              }
-            >
-              🛡️ Mitigation
-            </NavLink>
-            <NavLink
-              to="/analysis"
-              className={({ isActive }) =>
-                `py-4 px-2 border-b-2 font-medium text-sm transition-colors ${
-                  isActive
-                    ? "border-blue-500 text-blue-400"
-                    : "border-transparent text-gray-300 hover:text-white hover:border-gray-300"
-                }`
-              }
-            >
-              📈 Analysis
-            </NavLink>
-          </div>
-        </div>
-      </nav>
-
+      <Navigation />
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Routes>
-          <Route
-            path="/dashboard"
-            element={
-              <Dashboard
-                asteroids={asteroidsData}
-                selectedAsteroid={selectedAsteroid}
-                impactResult={impactResult}
-                riskData={riskData}
-              />
-            }
-          />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route
             path="/simulation"
             element={
               <div className="space-y-8">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   <div className="space-y-6">
-                    <AsteroidSelector
-                      asteroids={asteroidsData}
-                      selectedId={selectedId}
-                      setSelectedId={setSelectedId}
-                    />
+                    <AsteroidSelector />
 
                     <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
                       <h3 className="text-xl font-bold mb-4">
@@ -346,7 +177,7 @@ const App = () => {
                       </div>
                     )}
 
-                    <RiskChart data={riskData} />
+                    <RiskChart />
                   </div>
                 </div>
 
@@ -355,37 +186,20 @@ const App = () => {
                     <h2 className="text-2xl font-bold text-center p-4 bg-gray-800">
                       3D Orbital View
                     </h2>
-                    <OrbitalView
-                      asteroids={asteroidsData}
-                      selectedAsteroid={selectedAsteroid}
-                    />
+                    <OrbitalView />
                   </div>
 
                   <div className="rounded-lg overflow-hidden shadow-lg border-2 border-gray-600">
                     <h2 className="text-2xl font-bold text-center p-4 bg-gray-800">
                       Impact Map
                     </h2>
-                    <ImpactMap
-                      asteroids={asteroidsData}
-                      crater={impactResult?.crater}
-                      velocityShift={impactResult?.impactShiftLat}
-                      selectedMarker={selectedMarker}
-                    />
+                    <ImpactMap />
                   </div>
                 </div>
               </div>
             }
           />
-          <Route
-            path="/mitigation"
-            element={
-              <MitigationPanel
-                selectedAsteroid={selectedAsteroid}
-                impactResult={impactResult}
-                onResultsChange={setMitigationResults}
-              />
-            }
-          />
+          <Route path="/mitigation" element={<MitigationPanel />} />
           <Route
             path="/analysis"
             element={

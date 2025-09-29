@@ -19,6 +19,7 @@ const defaultContext = {
   setSize: () => {},
   setMitigationResults: () => {},
   setShowScenario: () => {},
+  setShowEducational: () => {},
 };
 export const dataContext = createContext(defaultContext);
 

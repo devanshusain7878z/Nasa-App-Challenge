@@ -1,4 +1,5 @@
-import React from "react";
+import { dataContext } from "@/Context";
+import React, { useContext } from "react";
 import {
   LineChart,
   Line,
@@ -11,7 +12,8 @@ import {
   Bar,
 } from "recharts";
 
-const RiskChart = ({ data }) => {
+const RiskChart = () => {
+  const { riskData: data } = useContext(dataContext);
   // Generate sample risk data if none provided
   const sampleData =
     data.length > 0

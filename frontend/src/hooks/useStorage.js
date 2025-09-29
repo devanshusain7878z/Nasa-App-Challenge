@@ -1,5 +1,15 @@
-import { getAsteroids, simulateImpact } from "@/services/api";
+import {
+  getAsteroidDetails,
+  getAsteroids,
+  simulateImpact,
+} from "@/services/api";
 import { useCallback, useEffect, useMemo, useReducer } from "react";
+
+function avgDiameterFromEstimated(estimated) {
+  if (!estimated?.meters) return null;
+  const m = estimated.meters;
+  return (m.estimated_diameter_min + m.estimated_diameter_max) / 2;
+}
 
 export function useStorage() {
   const [
@@ -170,6 +180,10 @@ export function useStorage() {
   const setShowScenario = useCallback((toggle) => {
     dispatch({ type: "setShowScenario", payload: toggle });
   }, []);
+
+  const setShowEducational = useCallback((toggle) => {
+    dispatch({ type: "setShowEducational", payload: toggle });
+  }, []);
   return {
     asteroidsData,
     selectedId,
@@ -188,5 +202,6 @@ export function useStorage() {
     setSize,
     setMitigationResults,
     setShowScenario,
+    setShowEducational,
   };
 }

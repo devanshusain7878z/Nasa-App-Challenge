@@ -1,8 +1,9 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useContext } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Stars, Text, Html } from "@react-three/drei";
 import * as THREE from "three";
 import Asteroid from "./Asteroid";
+import { dataContext } from "@/Context";
 
 const Earth = ({ selectedAsteroid }) => {
   const earthRef = useRef();
@@ -77,7 +78,12 @@ const ImpactZone = ({ impactResult, selectedAsteroid }) => {
   );
 };
 
-const OrbitalView = ({ asteroids, selectedAsteroid, impactResult }) => {
+const OrbitalView = () => {
+  const {
+    asteroidsData: asteroids,
+    selectedAsteroid,
+    impactResult,
+  } = useContext(dataContext);
   const [hoveredAsteroid, setHoveredAsteroid] = useState(null);
   const [showLabels, setShowLabels] = useState(true);
 
