@@ -2,26 +2,17 @@ import { useRef, useState } from "react";
 import { useFrame, useLoader } from "@react-three/fiber";
 import * as THREE from "three";
 
-const getColorBySize = (size) => {
-  if (size < 100) return "#10B981"; // green
-  if (size < 300) return "#F59E0B"; // yellow
-  if (size < 600) return "#F97316"; // orange
-  return "#EF4444"; // red
-};
+// const getColorBySize = (size) => {
+//   if (size < 100) return "#10B981"; // green
+//   if (size < 300) return "#F59E0B"; // yellow
+//   if (size < 600) return "#F97316"; // orange
+//   return "#EF4444"; // red
+// };
 
 const Asteroid = ({ asteroid, speed, isSelected, isHazardous, onHover }) => {
   const meshRef = useRef();
   const angleRef = useRef(Math.random() * Math.PI * 2);
   const [hovered, setHovered] = useState(false);
-
-  // Load textures with fallback
-  let colorMap, normalMap;
-  try {
-    colorMap = useLoader(THREE.TextureLoader, "/textures/asteroid.jpg");
-    normalMap = useLoader(THREE.TextureLoader, "/textures/asteroid1.jpg");
-  } catch (error) {
-    console.warn("Could not load asteroid textures, using fallback");
-  }
 
   useFrame((state) => {
     if (!meshRef.current) return;
@@ -51,35 +42,35 @@ const Asteroid = ({ asteroid, speed, isSelected, isHazardous, onHover }) => {
     }
   });
 
-  const getMaterial = () => {
-    if (colorMap && normalMap) {
-      return (
-        <meshStandardMaterial
-          map={colorMap}
-          normalMap={normalMap}
-          roughness={0.95}
-          metalness={0.05}
-          emissive={
-            isHazardous ? "#ff4444" : isSelected ? "#ffff00" : "#000000"
-          }
-          emissiveIntensity={isHazardous ? 0.2 : isSelected ? 0.1 : 0}
-        />
-      );
-    } else {
-      // Fallback material
-      return (
-        <meshStandardMaterial
-          color={getColorBySize(asteroid.size * 1000)}
-          roughness={0.95}
-          metalness={0.05}
-          emissive={
-            isHazardous ? "#ff4444" : isSelected ? "#ffff00" : "#000000"
-          }
-          emissiveIntensity={isHazardous ? 0.2 : isSelected ? 0.1 : 0}
-        />
-      );
-    }
-  };
+  // const getMaterial = () => {
+  //   if (colorMap && normalMap) {
+  //     return (
+  //       <meshStandardMaterial
+  //         map={colorMap}
+  //         normalMap={normalMap}
+  //         roughness={0.95}
+  //         metalness={0.05}
+  //         emissive={
+  //           isHazardous ? "#ff4444" : isSelected ? "#ffff00" : "#000000"
+  //         }
+  //         emissiveIntensity={isHazardous ? 0.2 : isSelected ? 0.1 : 0}
+  //       />
+  //     );
+  //   } else {
+  //     // Fallback material
+  //     return (
+  //       <meshStandardMaterial
+  //         color={getColorBySize(asteroid.size * 1000)}
+  //         roughness={0.95}
+  //         metalness={0.05}
+  //         emissive={
+  //           isHazardous ? "#ff4444" : isSelected ? "#ffff00" : "#000000"
+  //         }
+  //         emissiveIntensity={isHazardous ? 0.2 : isSelected ? 0.1 : 0}
+  //       />
+  //     );
+  //   }
+  // };
 
   return (
     <mesh
@@ -97,7 +88,7 @@ const Asteroid = ({ asteroid, speed, isSelected, isHazardous, onHover }) => {
       scale={isSelected ? 1.5 : 1}
     >
       <icosahedronGeometry args={[Math.max(asteroid.size / 100, 0.05), 2]} />
-      {getMaterial()}
+      {/* {getMaterial()} */}
 
       {/* Selection ring */}
       {isSelected && (
