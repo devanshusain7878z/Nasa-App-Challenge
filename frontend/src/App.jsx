@@ -5,35 +5,16 @@ import Dashboard from "./components/Dashboard";
 import MitigationPanel from "./components/MitigationPanel";
 import EducationalOverlay from "./components/EducationalOverlay";
 import Impactor2025Scenario from "./components/Impactor2025Scenario";
-import "./accessibility.css";
+//import "./accessibility.css";
 import { dataContext } from "./Context";
 import Header from "./components/Header";
 import Navigation from "./components/Navigation";
 import Simulation from "./components/Simulation";
 import Analysis from "./components/Analysis";
 
-function idToLatLng(id) {
-  // deterministic pseudo-random lat/lng from id
-  let hash = 0;
-  for (let i = 0; i < id.length; i++)
-    hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
-  const lat = (hash % 18000) / 100 - 90; // -90..+90
-  const lng = (Math.floor(hash / 18000) % 36000) / 100 - 180; // -180..+180
-  return [lat, lng];
-}
-
 const App = () => {
-  const {
-    selectedAsteroid,
-    showEducational,
-    showScenario,
-    setShowScenario,
-    setShowEducational,
-  } = useContext(dataContext);
-
-  const selectedMarker = selectedAsteroid
-    ? idToLatLng(selectedAsteroid.id)
-    : null;
+  const { showEducational, showScenario, setShowScenario, setShowEducational } =
+    useContext(dataContext);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-700 text-white">
