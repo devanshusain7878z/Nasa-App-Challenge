@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import axios from "axios";
+import { dataContext } from "@/Context";
 
-const MitigationPanel = ({
-  selectedAsteroid,
-  impactResult,
-  onResultsChange,
-}) => {
+const MitigationPanel = () => {
+  const {
+    selectedAsteroid,
+    impactResult,
+    setMitigationResults: onResultsChange,
+  } = useContext(dataContext);
   const [selectedStrategy, setSelectedStrategy] = useState("kinetic-impactor");
   const [parameters, setParameters] = useState({
     impactorMass: 1000,
@@ -75,6 +77,7 @@ const MitigationPanel = ({
   };
 
   const compareStrategies = async () => {
+    console.log(selectedAsteroid, impactResult);
     if (!selectedAsteroid || !impactResult) {
       alert("Please select an asteroid and run an impact simulation first");
       return;

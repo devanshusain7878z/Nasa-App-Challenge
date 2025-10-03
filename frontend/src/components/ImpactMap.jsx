@@ -1,5 +1,5 @@
 // frontend/src/components/ImpactMap.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -15,6 +15,8 @@ import "leaflet/dist/leaflet.css";
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
+import { data } from "react-router-dom";
+import { dataContext } from "@/Context";
 
 // Fix for default markers in react-leaflet
 delete L.Icon.Default.prototype._getIconUrl;
@@ -24,14 +26,24 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow,
 });
 
+function idToLatLng(id) {
+  // deterministic pseudo-random lat/lng from id
+  let hash = 0;
+  for (let i = 0; i < id.length; i++)
+    hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
+  const lat = (hash % 18000) / 100 - 90; // -90..+90
+  const lng = (Math.floor(hash / 18000) % 36000) / 100 - 180; // -180..+180
+  return [lat, lng];
+}
+
 const ImpactMap = ({
-  asteroids = [],
   crater,
   velocityShift = 0,
   selectedMarker,
-  impactResult,
   tsunamiZones = [],
 }) => {
+  const { asteroidsData: asteroids = [], impactResult } =
+    useContext(dataContext);
   const [tsunamiData, setTsunamiData] = useState([]);
   const [seismicData, setSeismicData] = useState([]);
 
@@ -268,7 +280,7 @@ const ImpactMap = ({
 
       {/* Impact Statistics */}
       {impactResult && (
-        <div className="absolute bottom-4 left-4 bg-gray-800 bg-opacity-90 p-3 rounded-lg text-white text-sm">
+        <div className="absolute bottom-4 left-4 bg-gray-800 bg-opacity-90 p-3 rounded-lg text-white text-sm ">
           <div className="font-bold mb-2">Impact Analysis</div>
           <div className="space-y-1">
             <div>Energy: {(impactResult.energy / 1e12).toFixed(2)} TJ</div>

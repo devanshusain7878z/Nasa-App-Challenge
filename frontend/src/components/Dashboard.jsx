@@ -1,6 +1,4 @@
 import React, { useState, useEffect, useContext } from "react";
-import { getAsteroids } from "../services/api";
-import { damp } from "three/src/math/MathUtils";
 import { dataContext } from "@/Context";
 
 const Dashboard = () => {
@@ -220,29 +218,39 @@ const Dashboard = () => {
         <h2 className="text-2xl font-bold mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <button className="bg-blue-600 hover:bg-blue-700 p-4 rounded-lg transition-colors">
-            <div className="text-center">
-              <div className="text-3xl mb-2">🎯</div>
-              <div className="font-bold">Run Simulation</div>
-              <div className="text-sm text-gray-300">Start impact analysis</div>
-            </div>
+            <a href="/mitigation">
+              <div className="text-center">
+                <div className="text-3xl mb-2">🎯</div>
+                <div className="font-bold">Run Simulation</div>
+                <div className="text-sm text-gray-300">
+                  Start impact analysis
+                </div>
+              </div>
+            </a>
           </button>
 
           <button className="bg-green-600 hover:bg-green-700 p-4 rounded-lg transition-colors">
-            <div className="text-center">
-              <div className="text-3xl mb-2">🛡️</div>
-              <div className="font-bold">Mitigation Strategies</div>
-              <div className="text-sm text-gray-300">
-                Explore deflection options
+            <a href="/mitigation">
+              <div className="text-center">
+                <div className="text-3xl mb-2">🛡️</div>
+                <div className="font-bold">Mitigation Strategies</div>
+                <div className="text-sm text-gray-300">
+                  Explore deflection options
+                </div>
               </div>
-            </div>
+            </a>
           </button>
 
           <button className="bg-purple-600 hover:bg-purple-700 p-4 rounded-lg transition-colors">
-            <div className="text-center">
-              <div className="text-3xl mb-2">📊</div>
-              <div className="font-bold">View Analysis</div>
-              <div className="text-sm text-gray-300">Detailed impact data</div>
-            </div>
+            <a href="/analysis">
+              <div className="text-center">
+                <div className="text-3xl mb-2">📊</div>
+                <div className="font-bold">View Analysis</div>
+                <div className="text-sm text-gray-300">
+                  Detailed impact data
+                </div>
+              </div>
+            </a>
           </button>
         </div>
       </div>
